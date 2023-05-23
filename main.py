@@ -4,7 +4,6 @@ import csv
 city_dictionary_list = []
 base = "https://api.open-meteo.com/v1/forecast?"
 extra_link = "&current_weather=true"
-response = requests.get("https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current_weather=true")
 
 
 def list_searcher(search_query, list_input):
