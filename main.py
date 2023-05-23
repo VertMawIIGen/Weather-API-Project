@@ -1,6 +1,4 @@
 import requests
-from geopy.geocoders import Nominatim
-from geopy.point import Point
 import csv
 
 city_dictionary_list = []
@@ -8,22 +6,24 @@ base = "https://api.open-meteo.com/v1/forecast?"
 extra_link = "&current_weather=true"
 response = requests.get("https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&current_weather=true")
 
-def list_searcher(search_query, list):
+
+def list_searcher(search_query, list_input):
     matching_dictionaries = []
-    for dict in list:
-        if dict["city"] == search_query or dict["city_ascii"] == search_query:
-            matching_dictionaries.append(dict)
+    for values in list_input:
+        if values["city"] == search_query or values["city_ascii"] == search_query:
+            matching_dictionaries.append(values)
     return matching_dictionaries
 
 
-def weather_obtainer(base, extra_link, dictionary):
+def weather_acquirer(link_base, link_ending, dictionary):
     dictionary_output = dictionary
     latitude = dictionary_output.get('lat')
     longitude = dictionary_output.get('lng')
     path = f"latitude={latitude}&longitude={longitude}"
-    apiurl = base + path + extra_link
-    data = requests.get(apiurl)
+    api_url = link_base + path + link_ending
+    data = requests.get(api_url)
     return data.json()
+
 
 def format_weather_data(api_input, dictionary):
     dictionary_output = dictionary
@@ -36,7 +36,8 @@ def format_weather_data(api_input, dictionary):
     print(f"Current weather for {city_name}, {state_name}, {country_name}:")
     for key in current_weather:
         value = current_weather.get(key)
-        print("{:^20}|{:^20}".format(key.title(),value))
+        print("{:^20}|{:^20}".format(key.title(), value))
+
 
 with open("worldcities.csv", "r", encoding="UTF-8") as f:
     reader = csv.DictReader(f)
@@ -48,7 +49,7 @@ user_query = input("What city would you like to know the weather of? ")
 matching_cities = list_searcher(user_query, city_dictionary_list)
 city_found = False
 end_search = False
-while city_found == False:
+while not city_found:
     if len(matching_cities) == 0:
         print("There are no cities that match your query.")
         print()
@@ -63,7 +64,7 @@ while city_found == False:
             end_search = True
     else:
         city_found = True
-if end_search == True:
+if end_search:
     print("Have a good day.")
 else:
     if len(matching_cities) > 1:
@@ -78,5 +79,5 @@ else:
         real_index = int(ord(user_choice) - 65)
         matching_cities = matching_cities[real_index]
 
-    weather_information = weather_obtainer(base, extra_link, matching_cities)
+    weather_information = weather_acquirer(base, extra_link, matching_cities)
     format_weather_data(weather_information, matching_cities)
