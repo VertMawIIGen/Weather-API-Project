@@ -4,7 +4,38 @@ import csv
 city_dictionary_list = []
 base = "https://api.open-meteo.com/v1/forecast?"
 extra_link = "&current_weather=true"
+weather_code = {0:"Clear sky",
+                1: "Mainly Clear",
+                2: "Partly Cloudy",
+                3: "Overcast",
+                45: "Fog",
+                48: "Depositing Rime Fog",
+                51: "Light Drizzle",
+                53: "Moderate Drizzle",
+                55: "Dense Drizzle",
+                56: "Light Freezing Drizzle",
+                57: "Dense Freezing Drizzle",
+                61: "Slight Rain",
+                63: "Moderate Rain",
+                65: "Heavy Rain",
+                66: "Light Freezing Rain",
+                67: "Heavy Freezing Rain",
+                71: "Slight Snowfall",
+                73: "Moderate Snowfall",
+                75: "Heavy Snowfall",
+                77: "Snow Grains",
+                80: "Slight Showers",
+                81: "Moderate Showers",
+                82: "Violent Showers",
+                85: "Slight Snow",
+                86: "Heavy Snow",
+                95: "Thunderstorm",
+                96: "Slight Hail Thunderstorm",
+                99: "Heavy Hail Thunderstorm"}
 
+def weather_code_decipher(code):
+    actual_weather = weather_code.get(code)
+    return actual_weather
 
 def list_searcher(search_query, list_input):
     matching_dictionaries = []
@@ -35,12 +66,16 @@ def format_weather_data(api_input, dictionary):
     state_name = dictionary_output.get('admin_name')
     data = api_input
     current_weather = data.get("current_weather")
+    temperature = current_weather.get("temperature")
+    windspeed = current_weather.get("windspeed")
+    wind_direction = current_weather.get("winddirection")
+    actual_weather = weather_code_decipher(current_weather.get("weathercode"))
+    time = current_weather.get("time")[-5:]
     print()
-    print(f"Current weather for {city_name}, {state_name}, {country_name}:")
-    for key in current_weather:
-        value = current_weather.get(key)
-        print("{:^20}|{:^20}".format(key.title(), value))
-
+    print(f"Weather for {city_name}, {state_name}, {country_name} at {time}:")
+    print("{:^30}|{:^30}".format("Weather", actual_weather))
+    print("{:^30}|{:^30}".format("Temperature", f"{temperature}°C"))
+    print("{:^30}|{:^30}".format("Windspeed and Direction", f"{windspeed}, {wind_direction}°"))
 
 with open("worldcities.csv", "r", encoding="UTF-8") as f:
     reader = csv.DictReader(f)
