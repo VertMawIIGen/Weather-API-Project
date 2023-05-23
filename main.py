@@ -91,15 +91,25 @@ while not city_found:
     if len(matching_cities) == 0:
         print("There are no cities that match your query.")
         print()
+        yes_or_no = False
         user_decision = input("Would you like to retry your query? ")
-        if user_decision.lower() == "yes":
-            print()
-            user_query = input("What city would you like to know the weather of? ")
-            matching_cities = list_searcher(user_query, city_dictionary_list)
-        else:
-            print()
-            city_found = True
-            end_search = True
+        while not yes_or_no:
+            if user_decision.lower() == "yes":
+                print()
+                yes_or_no = True
+                user_query = input("What city would you like to know the weather of? ")
+                matching_cities = list_searcher(user_query, city_dictionary_list)
+            elif user_decision.lower() == "no":
+                print()
+                city_found = True
+                end_search = True
+                yes_or_no = True
+            else:
+                print()
+                print("Input not recognized, please try again.")
+                user_decision = input("Would you like to retry your query? ")
+
+
     else:
         city_found = True
 if end_search:
