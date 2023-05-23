@@ -17,6 +17,8 @@ def list_searcher(search_query, list_input):
 
 def weather_acquirer(link_base, link_ending, dictionary):
     dictionary_output = dictionary
+    if isinstance(dictionary_output, list):
+        dictionary_output = dictionary[0]
     latitude = dictionary_output.get('lat')
     longitude = dictionary_output.get('lng')
     path = f"latitude={latitude}&longitude={longitude}"
@@ -27,6 +29,8 @@ def weather_acquirer(link_base, link_ending, dictionary):
 
 def format_weather_data(api_input, dictionary):
     dictionary_output = dictionary
+    if isinstance(dictionary_output, list):
+        dictionary_output = dictionary[0]
     city_name = dictionary_output.get('city')
     country_name = dictionary_output.get('country')
     state_name = dictionary_output.get('admin_name')
