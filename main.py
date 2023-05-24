@@ -4,7 +4,7 @@ import csv
 city_dictionary_list = []
 base = "https://api.open-meteo.com/v1/forecast?"
 extra_link = "&current_weather=true"
-weather_code = {0:"Clear sky",
+weather_code = {0: "Clear sky",
                 1: "Mainly Clear",
                 2: "Partly Cloudy",
                 3: "Overcast",
@@ -33,12 +33,15 @@ weather_code = {0:"Clear sky",
                 96: "Slight Hail Thunderstorm",
                 99: "Heavy Hail Thunderstorm"}
 
+
 def weather_code_decipher(code):
     actual_weather = weather_code.get(code)
     return actual_weather
 
+
 def list_searcher(search_query, list_input):
     matching_dictionaries = []
+    search_query = search_query.title()
     for values in list_input:
         if values["city"] == search_query or values["city_ascii"] == search_query:
             matching_dictionaries.append(values)
@@ -67,15 +70,15 @@ def format_weather_data(api_input, dictionary):
     data = api_input
     current_weather = data.get("current_weather")
     temperature = current_weather.get("temperature")
-    windspeed = current_weather.get("windspeed")
+    wind_speed = current_weather.get("windspeed")
     wind_direction = current_weather.get("winddirection")
     actual_weather = weather_code_decipher(current_weather.get("weathercode"))
-    time = current_weather.get("time")[-5:]
     print()
-    print(f"Weather for {city_name}, {state_name}, {country_name} at {time}:")
+    print(f"Latest weather for {city_name}, {state_name}, {country_name}:")
     print("{:^30}|{:^30}".format("Weather", actual_weather))
     print("{:^30}|{:^30}".format("Temperature", f"{temperature}°C"))
-    print("{:^30}|{:^30}".format("Windspeed and Direction", f"{windspeed}, {wind_direction}°"))
+    print("{:^30}|{:^30}".format("Wind speed and Direction", f"{wind_speed} km/h, {wind_direction}°"))
+
 
 with open("worldcities.csv", "r", encoding="UTF-8") as f:
     reader = csv.DictReader(f)
@@ -83,14 +86,14 @@ with open("worldcities.csv", "r", encoding="UTF-8") as f:
         city_dictionary_list.append(row)
 
 print("Welcome to the weather searcher.")
-user_query = input("What city would you like to know the weather of? ")
+user_query = input("What city would you like to know the weather of? ").title()
 matching_cities = list_searcher(user_query, city_dictionary_list)
 city_found = False
 end_search = False
 while not city_found:
     if len(matching_cities) == 0:
-        print("There are no cities that match your query.")
         print()
+        print("There are no cities that match your query.")
         yes_or_no = False
         user_decision = input("Would you like to retry your query? ")
         while not yes_or_no:
@@ -108,15 +111,14 @@ while not city_found:
                 print()
                 print("Input not recognized, please try again.")
                 user_decision = input("Would you like to retry your query? ")
-
-
     else:
         city_found = True
 if end_search:
     print("Have a good day.")
 else:
     if len(matching_cities) > 1:
-        print("There are 2 cities under your query.")
+        print()
+        print("There is more than one city under your query.")
         print()
         character = 65
         for index, i in enumerate(matching_cities):
